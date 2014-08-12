@@ -44,7 +44,7 @@ module.exports = (robot) ->
           else
             callback null, json['rdf:RDF'].item
 
-  new cron.CronJob '15 * * * *', ->
+  new cron.CronJob '00 15 * * * *', ->
     getItems (err, items) ->
       res_str = ''
       if items and items.length > 0

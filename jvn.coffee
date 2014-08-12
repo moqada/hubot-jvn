@@ -7,12 +7,12 @@
 #   "xml2js": "0.4.4"
 #
 # Configuration:
-#   HUBOT_JVN_ROOM - crontab から定期的にメッセージを投稿するルーム
+#   HUBOT_JVN_ROOM - CronJob から定期的にメッセージを投稿するルーム (<JID>@conf.hipchat.com)
 #
 # Commands:
 #   hubot jvn <count> - 最新の記事を <count> 分取得する。<count> を指定しない場合は最新5つだけ取得する。
 #
-# Author
+# Author:
 #   moqada
 
 BRAIN_KEY = 'jvn::modified'

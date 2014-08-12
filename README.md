@@ -2,13 +2,13 @@
 
 JVN(https://jvn.jp/) の脆弱性情報を返す hubot-scripts。
 
-crontab で定期的に RSS を取得、最新情報が存在する場合は投稿する。
+CronJob で定期的に RSS を取得、最新情報が存在する場合は投稿する。
 
 ## Configuration
 
 **HUBOT_JVN_ROOM**
 
-crontab の定期処理で投稿するルームID
+CronJob から定期的にメッセージを投稿するルーム (<JID>@conf.hipchat.com)
 
 ## Installation
 

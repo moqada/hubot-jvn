@@ -8,6 +8,10 @@
 #
 # Configuration:
 #   HUBOT_JVN_ROOM - CronJob から定期的にメッセージを投稿するルーム (<JID>@conf.hipchat.com)
+#   HUBOT_JVN_CRON_TIME - CronJob の実行時間指定
+#   HUBOT_JVN_ERROR_MESSAGE - エラー発生時のメッセージ
+#   HUBOT_JVN_REPLY_MESSAGE - jvn コマンドによる返信時のメッセージ
+#   HUBOT_JVN_CRON_MESSAGE - CronJob による投稿時のメッセージ
 #
 # Commands:
 #   hubot jvn <count> - 最新の記事を <count> 分取得する。<count> を指定しない場合は最新5つだけ取得する。
@@ -17,6 +21,7 @@
 
 BRAIN_KEY = 'jvn::modified'
 FEED_URL = 'https://jvn.jp/rss/jvn.rdf'
+CRON_TIME = '00 15 * * * *'
 xml2js = require 'xml2js'
 cron = require 'cron'
 
@@ -24,11 +29,11 @@ module.exports = (robot) ->
 
   robot.respond /jvn( (\d+))?/i, (msg) ->
     getItems (err, items) ->
-      if err
-        msg.send 'なんかRSS取得できんかったっぽい'
+      if err and process.env.HUBOT_JVN_ERROR_MESSAGE
+        msg.send process.env.HUBOT_JVN_ERROR_MESSAGE
       else
         count = msg.match[2] | 5
-        res_str = 'ほい、最新の脆弱性情報やで:\n\n'
+        res_str = process.env.HUBOT_JVN_REPLY_MESSAGE or ''
         for item in items[...count]
           res_str += "#{item.title} #{item.link[0]}\n"
         msg.send res_str
@@ -44,7 +49,7 @@ module.exports = (robot) ->
           else
             callback null, json['rdf:RDF'].item
 
-  new cron.CronJob '00 15 * * * *', ->
+  new cron.CronJob process.env.HUBOT_JVN_CRON_TIME or CRON_TIME, ->
     getItems (err, items) ->
       res_str = ''
       if items and items.length > 0
@@ -55,7 +60,8 @@ module.exports = (robot) ->
           if not modified or date > modified
             res_str += "#{item.title} #{item.link[0]}\n"
         if res_str
-          robot.messageRoom process.env.HUBOT_JVN_ROOM, "新しい脆弱性情報、出てたで:\n\n#{res_str}"
+          res_str = (process.env.HUBOT_JVN_CRON_MESSAGE or '') + res_str
+          robot.messageRoom process.env.HUBOT_JVN_ROOM, res_str
 
         robot.brain.set BRAIN_KEY, new Date().toString()
         robot.brain.save()

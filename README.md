@@ -10,6 +10,30 @@ CronJob で定期的に RSS を取得、最新情報が存在する場合は投�
 
 CronJob から定期的にメッセージを投稿するルーム (<JID>@conf.hipchat.com)
 
+**HUBOT_JVN_CRON_TIME**
+
+CronJob の実行時間指定
+
+**HUBOT_JVN_ERROR_MESSAGE**
+
+エラー発生時のメッセージ
+
+**HUBOT_JVN_REPLY_MESSAGE**
+
+jvn コマンドによる返信時のメッセージ
+
+**HUBOT_JVN_CRON_MESSAGE**
+
+CronJob による投稿時のメッセージ
+ex.
+
+```
+@all
+＿人人人人人人人人＿
+＞　新しい脆弱性　＜
+￣Y^Y^Y^Y^Y^Y^Y￣
+```
+
 ## Installation
 
 1. package.json の dependencies に hubot-jvn を追加

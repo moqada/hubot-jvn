@@ -49,6 +49,7 @@ module.exports = (robot) ->
       res_str = ''
       if items and items.length > 0
         modified = robot.brain.get BRAIN_KEY
+        modified = modified and new Date modified
         for item in items
           date = new Date(item['dcterms:modified'][0])
           if not modified or date > modified
@@ -56,6 +57,6 @@ module.exports = (robot) ->
         if res_str
           robot.messageRoom process.env.HUBOT_JVN_ROOM, "新しい脆弱性情報、出てたで:\n\n#{res_str}"
 
-        robot.brain.set BRAIN_KEY, new Date()
+        robot.brain.set BRAIN_KEY, new Date().toString()
         robot.brain.save()
   , null, true

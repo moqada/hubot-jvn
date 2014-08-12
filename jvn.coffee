@@ -21,22 +21,14 @@
 
 BRAIN_KEY = 'jvn::modified'
 FEED_URL = 'https://jvn.jp/rss/jvn.rdf'
-CRON_TIME = '00 15 * * * *'
+CRON_TIME = process.env.HUBOT_JVN_CRON_TIME or '00 15 * * * *'
+CRON_MESSAGE = process.env.HUBOT_JVN_CRON_MESSAGE or ''
+ERROR_MESSAGE = process.env.HUBOT_JVN_ERROR_MESSAGE or ''
+REPLY_MESSAGE = process.env.HUBOT_JVN_REPLY_MESSAGE or ''
 xml2js = require 'xml2js'
 cron = require 'cron'
 
 module.exports = (robot) ->
-
-  robot.respond /jvn( (\d+))?/i, (msg) ->
-    getItems (err, items) ->
-      if err and process.env.HUBOT_JVN_ERROR_MESSAGE
-        msg.send process.env.HUBOT_JVN_ERROR_MESSAGE
-      else
-        count = msg.match[2] or 5
-        res_str = process.env.HUBOT_JVN_REPLY_MESSAGE or ''
-        for item in items[...count]
-          res_str += "#{item.title} #{item.link[0]}\n"
-        msg.send res_str
 
   getItems = (callback) ->
     robot.http(FEED_URL).get() (err, res, body) ->
@@ -49,19 +41,30 @@ module.exports = (robot) ->
           else
             callback null, json['rdf:RDF'].item
 
-  new cron.CronJob process.env.HUBOT_JVN_CRON_TIME or CRON_TIME, ->
+  createMessage = (items, prefix) ->
+    resStr = ("#{i.title} #{i.link[0]}" for i in items).join('\n')
+    if resStr and prefix
+      resStr = "#{prefix}\n#{resStr}"
+    resStr
+
+  robot.respond /jvn( (\d+))?/i, (msg) ->
     getItems (err, items) ->
-      res_str = ''
+      if err and ERROR_MESSAGE
+        msg.send ERROR_MESSAGE
+      else
+        count = msg.match[2] or 5
+        msg.send createMessage items[...count], REPLY_MESSAGE
+
+  new cron.CronJob CRON_TIME, ->
+    getItems (err, items) ->
       if items and items.length > 0
         modified = robot.brain.get BRAIN_KEY
         modified = modified and new Date modified
-        for item in items
-          date = new Date(item['dcterms:modified'][0])
-          if not modified or date > modified
-            res_str += "#{item.title} #{item.link[0]}\n"
-        if res_str
-          res_str = (process.env.HUBOT_JVN_CRON_MESSAGE or '') + res_str
-          robot.messageRoom process.env.HUBOT_JVN_ROOM, res_str
+        items = items.filter (i) ->
+          date = new Date(i['dcterms:modified'][0])
+          not modified or date > modified
+        resStr = createMessage items, CRON_MESSAGE
+        resStr and robot.messageRoom process.env.HUBOT_JVN_ROOM, resStr
 
         robot.brain.set BRAIN_KEY, new Date().toString()
         robot.brain.save()

@@ -1,6 +1,6 @@
 {
   "name": "hubot-jvn",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Hubot-scripts returns JVN feed information from https://jvn.jp",
   "main": "src/index.coffee",
   "scripts": {

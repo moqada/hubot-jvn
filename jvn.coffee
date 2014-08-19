@@ -32,7 +32,7 @@ module.exports = (robot) ->
       if err and process.env.HUBOT_JVN_ERROR_MESSAGE
         msg.send process.env.HUBOT_JVN_ERROR_MESSAGE
       else
-        count = msg.match[2] | 5
+        count = msg.match[2] or 5
         res_str = process.env.HUBOT_JVN_REPLY_MESSAGE or ''
         for item in items[...count]
           res_str += "#{item.title} #{item.link[0]}\n"

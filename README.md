@@ -25,6 +25,7 @@ jvn コマンドによる返信時のメッセージ
 **HUBOT_JVN_CRON_MESSAGE**
 
 CronJob による投稿時のメッセージ
+
 ex.
 
 ```
@@ -44,5 +45,6 @@ ex.
 ## Commands
 
 ```
-hubot jvn <count> - 最新の記事を <count> 分取得する。<count> を指定しない場合は最新5つだけ取得する。
+hubot jvn - 最新の記事を5つ取得する
+hubot jvn <count> - 最新の記事を <count> 分取得する
 ```

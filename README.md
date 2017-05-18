@@ -1,5 +1,7 @@
 # hubot-jvn
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/moqada/hubot-jvn.svg)](https://greenkeeper.io/)
+
 JVN(https://jvn.jp/) の脆弱性情報を返す hubot-scripts。
 
 CronJob で定期的に RSS を取得、最新情報が存在する場合は投稿する。
